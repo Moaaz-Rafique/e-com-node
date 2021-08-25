@@ -18,10 +18,11 @@ router.post("/product/remove", product_controller.remove_product);
 router.post("/product/update", product_controller.update_product);
 router.post("/product/setimage", async (req, res) => {
   try {
+    console.log(req.body);
     if (!req.files) {
       res.send({
         status: false,
-        message: "Error:dfdf uploaded",
+        message: "Error:file not uploaded",
       });
     } else {
       let uploadedFile = req?.files?.image;

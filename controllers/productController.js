@@ -47,8 +47,14 @@ exports.product_detail = async (req, res) => {
 
 exports.add_product = async (req, res) => {
   try {
-    const data = new Product(req.body);
+    if (!req.files?.image) {
+      throw "Image not uploaded successfully";
+    }
+    const image = req?.files?.image;
+    req.body.image = image?.name || "Image is Not properly uploaded";
+    const data = new Product(req?.body);
     await data.save();
+    image.mv("./public/images/" + data._id + "/" + image?.name);
     res.json({ data, success: true });
   } catch (error) {
     res.json({ message: error.message, success: false });
