@@ -39,6 +39,7 @@ const productsByCategory = async (categories) => {
     const data = await Product.find({
       categories: { $in: categories },
     })
+      .limit(5)
       .populate("categories")
       .exec();
     console.log(data, "myData");
