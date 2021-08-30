@@ -34,12 +34,27 @@ exports.product_list = async (req, res) => {
     res.json({ message: error.message, success: false });
   }
 };
+const productsByCategory = async (categories) => {
+  try {
+    const data = await Product.find({
+      categories: { $in: categories },
+    })
+      .populate("categories")
+      .exec();
+    console.log(data, "myData");
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+};
 exports.product_detail = async (req, res) => {
   try {
     const data = await Product.findById(req.query.id)
       .populate("categories")
       .exec();
-    res.json({ data, success: true });
+    let similar = data.populated("categories");
+    similar = await productsByCategory(similar);
+    res.json({ data, similar, success: true });
   } catch (error) {
     res.json({ message: error.message, success: false });
   }

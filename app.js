@@ -24,6 +24,11 @@ db.connection
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "pug");
 
+// Function to serve all static files
+// inside public directory.
+app.use(express.static("public"));
+app.use("/public/images", express.static("images"));
+
 app.use(cors());
 app.use(logger("dev"));
 app.use(express.json());
