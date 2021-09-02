@@ -16,32 +16,7 @@ router.get("/products", product_controller.product_list);
 router.post("/product/add", product_controller.add_product);
 router.post("/product/remove", product_controller.remove_product);
 router.post("/product/update", product_controller.update_product);
-router.post("/product/setimage", async (req, res) => {
-  try {
-    console.log(req.body);
-    if (!req.files) {
-      res.send({
-        status: false,
-        message: "Error:file not uploaded",
-      });
-    } else {
-      let uploadedFile = req?.files?.image;
-      const filePath = "./public/images/" + Date.now() + uploadedFile?.name;
-      uploadedFile.mv(filePath);
-      res.json({
-        message: "Image is uploaded successfully",
-        data: {
-          name: uploadedFile.name,
-          mimetype: uploadedFile.mimetype,
-          size: uploadedFile.size,
-          filePath,
-        },
-      });
-    }
-  } catch (err) {
-    res.json({ message: err.message });
-  }
-});
+
 /// Category ROUTES ///
 router.get("/category", category_controller.category_detail);
 router.get("/categories", category_controller.category_list);
