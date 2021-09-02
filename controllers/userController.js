@@ -19,6 +19,14 @@ exports.user_detail = async (req, res) => {
 };
 exports.user_signup = async (req, res) => {
   try {
+    if (req?.body?.id) {
+      let existingData = await User.findOne({ id: req?.body?.id }).exec();
+      if (existingData) {
+        res.json({ existingData, success: true });
+        // res.json({})
+        return;
+      }
+    }
     let data = new User(req.body);
     data = await data.save();
     res.json({ data, success: true });
@@ -28,12 +36,19 @@ exports.user_signup = async (req, res) => {
 };
 exports.user_login = async (req, res) => {
   try {
-    const data = await User.findOne({ name: req.body.name });
+    const data = await User.findOne({
+      email: req.body.email,
+      passwordHash: req.body.passwordHash,
+    }).exec();
     if (data == null) {
       throw new Error("User not found");
     }
     res.json({ data, success: true });
   } catch (error) {
-    res.json({ message: error.message, success: false });
+    res.json({
+      message: error.message,
+      passwordHash: req.body.passwordHash,
+      success: false,
+    });
   }
 };
