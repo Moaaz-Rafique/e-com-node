@@ -27,10 +27,11 @@ router.post("/category/update", category_controller.update_category);
 /// Cart ROUTES ///
 router.get("/cart", cart_controller.cart_detail);
 router.get("/carts", cart_controller.cart_list);
+router.get("/user/cart",cart_controller.user_cart);
+router.get('/user/cart/current',cart_controller.user_current_cart)
 router.post("/cart/add", cart_controller.add_cart);
 router.post("/cart/remove", cart_controller.remove_cart_by_cart_id);
 router.post("/cart/update", cart_controller.update_cart);
-
 /// user ROUTES ///
 router.get("/users", user_controller.user_list);
 router.get("/user", user_controller.user_detail);

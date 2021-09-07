@@ -9,6 +9,7 @@ var CartSchema = new Schema({
     type: String,
     required: true,
     enum: ["added", "removed", "bought"],
+    default: 'added',
   },
   user: { type: Schema.Types.ObjectId, ref: "User", required: true },
 });

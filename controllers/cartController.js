@@ -2,7 +2,7 @@ var Cart = require("../models/cart");
 
 exports.cart_list = async (req, res) => {
   try {
-    const data = await Cart.find({ user: req.body.user })
+    const data = await Cart.find()
       .populate("product")
       .exec();
     res.json({ data, success: true });
@@ -10,6 +10,28 @@ exports.cart_list = async (req, res) => {
     res.json({ message: error.message, success: false });
   }
 };
+
+exports.user_cart= async (req,res)=>{  
+  try {
+    const data = await Cart.find({ user: req.query.user })
+      .populate("product")
+      .exec();
+      console.log("data",req.query)
+    res.json({ data, success: true });
+  } catch (error) {
+    res.json({ message: error.message, success: false });
+  }
+}
+exports.user_current_cart= async (req,res)=>{  
+  try {
+    const data = await Cart.find({ user: req.query.user, status:'added' })
+      .populate("product")
+      .exec();
+    res.json({ data, success: true });
+  } catch (error) {
+    res.json({ message: error.message, success: false });
+  }
+}
 
 exports.cart_detail = async (req, res) => {
   try {
@@ -22,8 +44,8 @@ exports.cart_detail = async (req, res) => {
 
 exports.add_cart = async (req, res) => {
   try {
-    console.log(req.user);
-    req.body.user = req.user._id;
+    // console.log(req.user);
+    req.body.user;
     let data = new Cart(req.body);
     data = await data.save();
     res.json({ data, success: true });
