@@ -28,7 +28,7 @@ exports.index = function (req, res) {
 };
 exports.product_list = async (req, res) => {
   try {
-    const data = await Product.find().populate("categories").exec();
+    const data = await Product.find().exec();
     res.json({ data, success: true });
   } catch (error) {
     res.json({ message: error.message, success: false });
@@ -50,10 +50,10 @@ const productsByCategory = async (categories, _id) => {
 };
 exports.product_detail = async (req, res) => {
   try {
-    const data = await Product.findById(req.query.id)
-      .populate("categories")
+    const data = await Product.findById(req?.query?.id)
+      // .populate("categories")
       .exec();
-    let similar = data.populated("categories");
+    let similar = data?.categories;
     similar = await productsByCategory(similar, data._id);
     res.json({ data, similar, success: true });
   } catch (error) {
@@ -86,12 +86,18 @@ exports.remove_product = async (req, res) => {
 };
 exports.update_product = async (req, res) => {
   try {
-    const data = await Product.findByIdAndUpdate(
-      req.body.id,
-      req.body.updatedProduct
-    ).exec();
-    res.json({ data, success: true });
+    if (req.files?.image) {
+      const image = req?.files?.image;
+      req.body.image = image?.name || "Image is Not properly uploaded";
+      image.mv("./public/images/" + req.body._id + "/" + image?.name);
+    }
+    const oldData = await Product.findByIdAndUpdate(req.body._id, req.body);
+    const data = await Product.findById(req.body._id);
+    // console.log(req.body);
+    // console.log(oldData);
+    res.json({ data, oldData, success: true });
   } catch (error) {
+    // console.log(error);
     res.json({ message: error.message, success: false });
   }
 };
