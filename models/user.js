@@ -1,5 +1,5 @@
 var mongoose = require("mongoose");
-var uniqueValidator = require("mongoose-unique-validator");
+// var uniqueValidator = require("mongoose-unique-validator");
 var Schema = mongoose.Schema;
 (bcrypt = require("bcrypt")), (SALT_WORK_FACTOR = 10);
 
@@ -11,7 +11,6 @@ var UserSchema = new Schema({
     // required: true,
     trim: true,
     lowercase: true,
-    unique: true,
     match: [
       /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
       "Please fill a valid email address",
@@ -62,7 +61,6 @@ UserSchema.pre("save", function (next) {
 UserSchema.methods.comparePassword = function (candidatePassword, cb) {
   // console.log(candidatePassword)
 };
-UserSchema.plugin(uniqueValidator, {
-  message: "This email already exists, try to login instead",
-});
+
+// UserSchema.plugin(uniqueValidator, {message:"This email already exists, try to login instead"});
 module.exports = mongoose.model("User", UserSchema);

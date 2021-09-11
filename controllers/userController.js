@@ -17,32 +17,29 @@ exports.user_detail = async (req, res) => {
     res.json({ message: error.message, success: false });
   }
 };
+
 exports.user_signup = async (req, res) => {
   try {
     if (req?.body?.id) {
-      let existingData = await User.findOne({ id: req?.body?.id }).exec();
+      let existingData = await User.findOne({ id: req?.body?.id });
       if (existingData) {
-        res.json({ existingData, success: true });
-        // res.json({})
+        res.json({ existingData, success: true, newUser:false });
         return;
+      }
+    }
+    if(req?.body?.email){
+      let existingData = await User.findOne({ email: req?.body?.email ,loginType: "email"});
+      if (existingData) {
+        throw new Error("This email is already in use try to login instead")
       }
     }
     let data = new User(req.body);
     // console.log(req)
+    // console.log(data)
     data = await data.save();
-    res.json({ data, success: true });
-  } catch (error) {
-    try {
-      if (error.name == "ValidationError") {
-        if (error?.errors?.email?.message) {
-          res.json({ message: error?.errors?.email?.message, success: false });
-        } else if (error?.errors?.id?.message) {
-          res.json({ message: error?.errors?.id?.message, success: false });
-        }
-      } else throw new Error("Value does not exist");
-    } catch (e) {
-      res.json({ message: error.message, success: false });
-    }
+    res.json({ data, success: true, newUser:true });
+  } catch (error) {    
+      res.json({ message: error.message, success: false });    
   }
 };
 
