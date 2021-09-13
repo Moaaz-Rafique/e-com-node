@@ -2,7 +2,7 @@ var Category = require("../models/category");
 
 exports.category_list = async (req, res) => {
   try {
-    const data = await Category.find().exec();
+    const data = await Category.find({ active: true }).exec();
     res.json({ data, success: true });
   } catch (error) {
     res.json({ message: error.message, success: false });
@@ -28,7 +28,9 @@ exports.add_category = async (req, res) => {
 
 exports.remove_category = async (req, res) => {
   try {
-    const data = await Category.findByIdAndRemove(req.query.id).exec();
+    const data = await Category.findByIdAndUpdate(req?.body?.id, {
+      active: false,
+    }).exec();
     res.json({ data, success: true });
   } catch (error) {
     res.json({ message: error.message, success: false });
@@ -36,11 +38,13 @@ exports.remove_category = async (req, res) => {
 };
 exports.update_category = async (req, res) => {
   try {
-    const data = await Category.findByIdAndUpdate(
+    const oldData = await Category.findByIdAndUpdate(
       req.body.id,
-      req.body.updatedCategory
+      req.body
     ).exec();
-    res.json({ data, success: true });
+    const data = await Category.findById(req.body.id).exec();
+    console.log(req.body, data);
+    res.json({ data, oldData, success: true });
   } catch (error) {
     res.json({ message: error.message, success: false });
   }

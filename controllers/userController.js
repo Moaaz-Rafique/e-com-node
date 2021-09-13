@@ -3,7 +3,7 @@ var User = require("../models/user");
   (exports.user_list = async (req, res) => {
     try {
       console.log(req.user);
-      const data = await User.find().exec();
+      const data = await User.find({}, { passwordHash: 0 });
       res.json({ data, success: true });
     } catch (error) {
       res.json({ message: error.message, success: false });
@@ -23,23 +23,26 @@ exports.user_signup = async (req, res) => {
     if (req?.body?.id) {
       let existingData = await User.findOne({ id: req?.body?.id });
       if (existingData) {
-        res.json({ existingData, success: true, newUser:false });
+        res.json({ existingData, success: true, newUser: false });
         return;
       }
     }
-    if(req?.body?.email){
-      let existingData = await User.findOne({ email: req?.body?.email ,loginType: "email"});
+    if (req?.body?.email) {
+      let existingData = await User.findOne({
+        email: req?.body?.email,
+        loginType: "email",
+      });
       if (existingData) {
-        throw new Error("This email is already in use try to login instead")
+        throw new Error("This email is already in use try to login instead");
       }
     }
     let data = new User(req.body);
     // console.log(req)
     // console.log(data)
     data = await data.save();
-    res.json({ data, success: true, newUser:true });
-  } catch (error) {    
-      res.json({ message: error.message, success: false });    
+    res.json({ data, success: true, newUser: true });
+  } catch (error) {
+    res.json({ message: error.message, success: false });
   }
 };
 
