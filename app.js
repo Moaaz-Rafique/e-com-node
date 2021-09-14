@@ -7,18 +7,32 @@ var cors = require("cors");
 const fileUpload = require("express-fileupload");
 var indexRouter = require("./routes/index");
 var catalogRouter = require("./routes/catalog");
+
+const dotenv = require("dotenv");
+
+const results = dotenv.config();
+
 var db = require("./config");
 var app = express();
+//process.env.TIMES
 //Import the mongoose module
 
 //Get the default connection
 
 //Bind connection to error event (to get notification of connection errors)
-db.connection
-  .on("error", console.error.bind(console, "MongoDB connection error:"))
-  .once("open", function () {
-    console.log("connected");
-  });
+try {
+  db.connection
+    .on("error", console.error.bind(console, "MongoDB connection error:"))
+    .once("open", function () {
+      console.log("connected");
+    });
+} catch (err) {
+  // try {
+  // } catch (error) {
+  //   console.log(error);
+  // }
+  console.log(err);
+}
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
@@ -27,6 +41,7 @@ app.set("view engine", "pug");
 // Function to serve all static files
 // inside public directory.
 app.use(express.static("public"));
+
 app.use("/public/images", express.static("images"));
 
 app.use(cors());
