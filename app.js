@@ -64,6 +64,9 @@ var myLogger = function (req, res, next) {
   };
   next();
 };
+app.get("/", function (req, res) {
+  res.redirect("/api/catalog");
+});
 app.use("/api/", myLogger, indexRouter);
 app.use("/api/catalog", myLogger, catalogRouter);
 // catch 404 and forward to error handler
