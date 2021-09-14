@@ -4,7 +4,7 @@ var mongoose = require("mongoose");
 var mongoDB = process.env.MONGO_DB;
 
 console.log(mongoDB);
-console.log("from config js process", process.env.MONGO_DB);
+console.log("from config js process", process.env.PORT);
 
 mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
 
