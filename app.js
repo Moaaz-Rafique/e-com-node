@@ -20,19 +20,12 @@ var app = express();
 //Get the default connection
 
 //Bind connection to error event (to get notification of connection errors)
-try {
-  db.connection
-    .on("error", console.error.bind(console, "MongoDB connection error:"))
-    .once("open", function () {
-      console.log("connected");
-    });
-} catch (err) {
-  // try {
-  // } catch (error) {
-  //   console.log(error);
-  // }
-  console.log(err);
-}
+
+db.connection
+  .on("error", console.error.bind(console, "MongoDB connection error:"))
+  .once("open", function () {
+    console.log("db connected");
+  });
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
