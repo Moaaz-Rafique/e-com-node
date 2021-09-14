@@ -63,3 +63,17 @@ exports.user_login = async (req, res, next) => {
     });
   }
 };
+
+exports.user_update = async (req, res, next) => {
+  try {
+    const oldData = await User.findByIdAndUpdate(req.body.id, req.body).exec();
+    const data = await User.findById(req.body.id).exec();
+    console.log("old-->", req.body);
+    res.json({ oldData, data, success: true });
+  } catch (error) {
+    res.json({
+      message: error.message,
+      success: false,
+    });
+  }
+};

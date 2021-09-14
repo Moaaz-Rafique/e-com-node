@@ -43,7 +43,7 @@ exports.update_category = async (req, res) => {
       req.body
     ).exec();
     const data = await Category.findById(req.body.id).exec();
-    console.log(req.body, data);
+    // console.log(req.body, data);
     res.json({ data, oldData, success: true });
   } catch (error) {
     res.json({ message: error.message, success: false });

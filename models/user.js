@@ -24,7 +24,7 @@ var UserSchema = new Schema({
   },
   imageUrl: { type: String },
   passwordHash: { type: String },
-
+  status: { type: String, required: true, enum: ["normal", "admin", "banned"] },
   // loginInfo: { type: Object, required: true },
 });
 UserSchema.path("id").required(function () {
