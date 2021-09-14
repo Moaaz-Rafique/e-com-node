@@ -5,6 +5,7 @@
   "scripts": {
     "start": "node ./bin/www",
     "devstart": "nodemon ./bin/www",
+    "heroku-postbuild": "npm install",
     "test": "echo \"Error: no test specified\""
   },
   "dependencies": {
