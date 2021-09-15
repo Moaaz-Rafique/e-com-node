@@ -27,6 +27,9 @@ exports.user_signup = async (req, res) => {
         return;
       }
     }
+    if (!req?.body?.status) {
+      req.body.status = "normal";
+    }
     if (req?.body?.email) {
       let existingData = await User.findOne({
         email: req?.body?.email,
