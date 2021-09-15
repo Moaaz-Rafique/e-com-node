@@ -5,6 +5,13 @@ var Cart = require("../models/cart");
 
 var async = require("async");
 
+const cloudinary = require("cloudinary");
+console.log({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.API_KEY,
+  api_secret: process.env.API_SECRET,
+});
+
 exports.index = function (req, res) {
   async.parallel(
     {
@@ -62,18 +69,48 @@ exports.product_detail = async (req, res) => {
 };
 
 exports.add_product = async (req, res) => {
+  // console.log(cloudinary);
   try {
     if (!req.files?.image) {
       throw "Image not uploaded successfully";
     }
     const image = req?.files?.image;
     req.body.image = image?.name || "Image is Not properly uploaded";
+    cloudinary.v2.config({
+      cloud_name: process.env.CLOUD_NAME,
+      api_key: process.env.API_KEY,
+      api_secret: process.env.API_SECRET,
+    });
+    cloudinary.v2.uploader.upload(req?.files?.upload?.path, (result) => {
+      // This will return the output after the code is exercuted both in the terminal and web browser
+      // When successful, the output will consist of the metadata of the uploaded file one after the other. These include the name, type, size and many more.
+      console.log(req?.files?.image?.path);
+      console.log("my--Image result cloudinary", result);
+      // if (result.public_id) {
+
+      // // The results in the web browser will be returned inform of plain text formart. We shall use the util that we required at the top of this code to do this.
+      //     res.writeHead(200, { 'content-type': 'text/plain' });
+      //     res.write('received uploads:\n\n');
+      //     res.end(util.inspect({ fields: fields, files: files }));
+      // }
+    });
+
     const data = new Product(req?.body);
     await data.save();
     image.mv("./public/images/" + data._id + "/" + image?.name);
     res.json({ data, success: true });
   } catch (error) {
-    res.json({ message: error.message, success: false });
+    console.log("My error-------->", error);
+    res.json({
+      message: error.message,
+      error,
+      success: false,
+      myKeys: {
+        cloud_name: process.env.CLOUD_NAME,
+        api_key: process.env.API_KEY,
+        api_secret: process.env.API_SECRET,
+      },
+    });
   }
 };
 exports.remove_product = async (req, res) => {
