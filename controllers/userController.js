@@ -1,4 +1,5 @@
 var User = require("../models/user");
+
 (bcrypt = require("bcrypt")),
   (exports.user_list = async (req, res) => {
     try {
