@@ -2,15 +2,35 @@ var User = require("../models/user");
 var Category = require("../models/category");
 var Product = require("../models/product");
 var Cart = require("../models/cart");
-
 var async = require("async");
+const multer = require("multer");
+const path = require("path");
+
+var storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, path.join(__dirname));
+  },
+  onError: function (err, next) {
+    console.log("error", err);
+    next(err);
+  },
+  filename: function (req, file, cb) {
+    // console.log("storage filename", file);
+    cb(null, Date.now() + path.extname(file.originalname));
+  },
+});
 
 const cloudinary = require("cloudinary");
-console.log({
+cloudinary.v2.config({
   cloud_name: process.env.CLOUD_NAME,
   api_key: process.env.API_KEY,
   api_secret: process.env.API_SECRET,
 });
+// console.log("product Controller", {
+//   cloud_name: process.env.CLOUD_NAME,
+//   api_key: process.env.API_KEY,
+//   api_secret: process.env.API_SECRET,
+// });
 
 exports.index = function (req, res) {
   async.parallel(
@@ -67,49 +87,57 @@ exports.product_detail = async (req, res) => {
     res.json({ message: error.message, success: false });
   }
 };
+// exports.add_product2 = async (req, res) => {
+//   console.log("------------add_product2-----------------");
+//   const upload = multer({ storage }).single("image");
+
+//   const uploadImage = await upload(req, res, async (err) => {
+//     if (err) {
+//       console.log(err);
+//     }
+//     console.log("file uploaded to server");
+//     // console.log("req.files", req.file);
+//     const result = await cloudinary.v2.uploader.upload(req.file.path);
+//     res.json({ result });
+//   });
+// };
 
 exports.add_product = async (req, res) => {
-  // console.log(cloudinary);
+  // console.log(req);
+
   try {
-    if (!req.files?.image) {
-      throw "Image not uploaded successfully";
-    }
-    const image = req?.files?.image;
-    req.body.image = image?.name || "Image is Not properly uploaded";
-    cloudinary.v2.config({
-      cloud_name: process.env.CLOUD_NAME,
-      api_key: process.env.API_KEY,
-      api_secret: process.env.API_SECRET,
-    });
-    cloudinary.v2.uploader.upload(req?.files?.upload?.path, (result) => {
-      // This will return the output after the code is exercuted both in the terminal and web browser
-      // When successful, the output will consist of the metadata of the uploaded file one after the other. These include the name, type, size and many more.
-      console.log(req?.files?.image?.path);
-      console.log("my--Image result cloudinary", result);
-      // if (result.public_id) {
+    const upload = multer({ storage }).single("image");
+    const MyError = null;
+    upload(req, res, async (err) => {
+      try {
+        if (err || !req?.file) {
+          console.error(err);
+          throw new Error("Image not uploaded successfully");
+        }
+        console.log("file uploaded to server");
 
-      // // The results in the web browser will be returned inform of plain text formart. We shall use the util that we required at the top of this code to do this.
-      //     res.writeHead(200, { 'content-type': 'text/plain' });
-      //     res.write('received uploads:\n\n');
-      //     res.end(util.inspect({ fields: fields, files: files }));
-      // }
-    });
+        const result = await cloudinary.v2.uploader.upload(req?.file?.path);
+        req.body.image = result?.url;
+        const fs = require("fs");
+        fs.unlinkSync(req?.file?.path);
 
-    const data = new Product(req?.body);
-    await data.save();
-    image.mv("./public/images/" + data._id + "/" + image?.name);
-    res.json({ data, success: true });
+        const frontData = new Product(req?.body);
+        const data = await frontData.save();
+        res.json({ data, success: true });
+      } catch (error) {
+        res.json({
+          message: error.message,
+          // error,
+          success: false,
+        });
+      }
+    });
   } catch (error) {
-    console.log("My error-------->", error);
+    // console.log("My error-------->", error);
     res.json({
       message: error.message,
-      error,
+      error: error,
       success: false,
-      myKeys: {
-        cloud_name: process.env.CLOUD_NAME,
-        api_key: process.env.API_KEY,
-        api_secret: process.env.API_SECRET,
-      },
     });
   }
 };

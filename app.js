@@ -5,12 +5,10 @@ var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 var cors = require("cors");
 const fileUpload = require("express-fileupload");
+const dotenv = require("dotenv");
+const results = dotenv.config();
 var indexRouter = require("./routes/index");
 var catalogRouter = require("./routes/catalog");
-
-const dotenv = require("dotenv");
-
-const results = dotenv.config();
 
 var db = require("./config");
 var app = express();
@@ -44,11 +42,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
-app.use(
-  fileUpload({
-    createParentPath: true,
-  })
-);
+// app.use(
+//   fileUpload({
+//     createParentPath: true,
+//   })
+// );
 
 var myLogger = function (req, res, next) {
   req.user = {
